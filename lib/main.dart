@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // Import các màn hình chính ở vòng ngoài
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Đưa plugin ra biến toàn cục để các file khác (như emp_home_view.dart) dễ dàng gọi dùng chung
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -37,10 +38,15 @@ void main() async {
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.requestNotificationsPermission();
 
-  // Khởi tạo Supabase (Giữ nguyên URL và Anon Key của bạn)
+  await dotenv.load(fileName: ".env");
+
+  // 3. ĐỌC KEY TỪ FILE .ENV THAY VÌ HARDCODE CHUỖI CHỮ NHƯ CŨ
+  final String supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+  final String supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+
   await Supabase.initialize(
-    url: 'https://gsscrakulpapkgkjzvts.supabase.co',
-    anonKey: 'sb_publishable_0cOW44Rfhoi9ceR4QTe8HA_rxpZqX5D',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(const MyApp());
